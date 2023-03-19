@@ -1,0 +1,48 @@
+services:
+  pg-dev:
+    image: postgres:14.4-alpine
+    container_name: pg-dev-container
+    ports:
+      - 5432:5432
+    volumes:
+      - pg-dev-volume:/var/lib/postgresql/data
+      - ./src/postgres/etc/:/docker-entrypoint-initdb.d/
+    environment:
+      - POSTGRES_DB=pg-dev-database
+      - POSTGRES_USER=pg-dev-user
+      - POSTGRES_PASSWORD=pg-dev-password
+
+  minio-dev:
+    image: minio/minio
+    container_name: minio-dev-container
+    ports:
+      - 9000:9000
+      - 9090:9090
+    volumes:
+      - minio-dev-volume:/data
+    environment:
+      - MINIO_ROOT_USER=minio-dev-user
+      - MINIO_ROOT_PASSWORD=minio-dev-password
+    command: server /data --console-address ":9090" 
+    
+
+  # pg_test:
+  #   image: postgres:14.4-alpine
+  #   container_name: pg-test-container
+  #   # restart: always
+  #   environment:
+  #     - POSTGRES_DB=pg-test-db
+  #     - POSTGRES_USER=pg-test-user
+  #     - POSTGRES_PASSWORD=pg-test-password
+  #   ports:
+  #     - 5433:5432
+  #   volumes:
+  #     - pg-test-volume:/var/lib/postgresql/data
+  #     - ./src/database/etc/:/docker-entrypoint-initdb.d/
+
+volumes:
+  pg-dev-volume:
+    driver: local
+  minio-dev-volume: {}
+  # pg-test-volume:
+  #   driver: local
